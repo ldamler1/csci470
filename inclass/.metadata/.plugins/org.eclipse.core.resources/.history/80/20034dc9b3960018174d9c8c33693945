@@ -1,0 +1,22 @@
+package assign6;
+
+import java.awt.Graphics;
+import javax.swing.JPanel;
+
+public class SortPanel extends JPanel
+{
+	private int[] intArray1, intArray2;
+	
+	public class SortAnimationPanel extends JPanel
+	{
+		@Override
+		protected void paintComponent(Graphics g)
+		{
+			
+		}
+	}
+	public SortPanel(SortAnimationPanel test)
+	{
+		
+	}
+}

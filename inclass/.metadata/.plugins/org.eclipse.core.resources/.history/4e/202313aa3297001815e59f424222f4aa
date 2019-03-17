@@ -1,0 +1,95 @@
+package assign6;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Random;
+
+import javax.swing.JButton;
+import javax.swing.JPanel;
+
+public class SortPanel extends JPanel
+{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private int[] intArray;
+	
+	public abstract class SortAnimationPanel extends JPanel implements Runnable
+	{
+		
+		
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		//get the dimensions of the panel and clear it
+			//if the array of integers not null, draw series of lines on the panel surface representing array elements. 
+			//The height of each line should represent the integer value of the corresponding integer array element. 
+		
+		@Override
+		protected void paintComponent(Graphics g)
+		{
+			super.paintComponent(g);
+			
+			g.setColor(Color.BLUE);
+			
+			if(intArray != null)
+			{
+				for(int i = 0; i < intArray.length; i++)
+				{
+					g.drawLine(i, 0, i, intArray[i]);
+				}
+				repaint();
+			}
+		}
+	}
+	
+	public SortPanel(SortAnimationPanel testPanel)
+	{
+		JPanel sortPanel = new JPanel(new GridBagLayout());
+		GridBagConstraints con = new GridBagConstraints();
+		con.fill = GridBagConstraints.BOTH;
+		
+		con.gridx = 0;
+		con.gridy = 0;
+		con.weighty = .7;
+		con.gridwidth = 3;
+		sortPanel.add(testPanel, con);
+		
+		JButton popArray = new JButton("Populate Array");
+		con.gridx = 0;
+		con.gridy = 1;
+		con.weightx = .25;
+		con.weighty = .15;
+		sortPanel.add(popArray, con);
+		
+		Random rand = new Random();
+		
+		popArray.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				intArray = new int[testPanel.getWidth()];
+				for(int i = 0; i < testPanel.getWidth(); i++) {
+					intArray[i] = rand.nextInt(testPanel.getHeight()) + 0;
+				}
+			}
+		});
+		//JBUTTON for populate array and sort HANDELS BUTTON EVENTS
+			//Array is size of panel width(pixels)
+			//Range is 0 to panel height
+			//Once built call repaint to display, disable Populate button, enable sort button
+		//JCOMBOBOX for selection
+		//JPANEL for image display
+	}
+	
+	public static void main(String[] args)
+	{
+		
+	}
+}

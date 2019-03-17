@@ -1,0 +1,8 @@
+package assign6_2;
+
+import javax.swing.JPanel;
+
+public class SortPanel extends JPanel
+{
+	
+}

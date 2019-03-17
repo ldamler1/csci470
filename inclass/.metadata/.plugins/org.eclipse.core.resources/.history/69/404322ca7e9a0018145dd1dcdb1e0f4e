@@ -1,0 +1,300 @@
+package assign6_2;
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Random;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+
+public class SortPanel extends JPanel
+{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private SortAnimationPanel testPanel;
+	private JButton popButton = new JButton("Populate Array");
+	private JButton sortButton = new JButton("Sort");
+	private String[] sortMethods = { "Selection", "Quick", "Bubble"};
+	private JComboBox<String> sortBox = new JComboBox<String>(sortMethods);
+	private int[] intArray;
+	private int speed = 25;
+	
+	public SortPanel()
+	{
+		//Makes control panel
+		JPanel controlPanel = new JPanel(new GridBagLayout());
+		//Adds control panel to SortPanel object (this)
+		this.add(controlPanel);
+		
+		//Makes new animation panel
+		testPanel = new SortAnimationPanel();
+		GridBagConstraints con = new GridBagConstraints();
+		con.fill = GridBagConstraints.BOTH;
+		
+		//Sets constraints
+		con.gridx = 0;
+		con.gridy = 0;
+		con.weightx = 1;
+		con.weighty = 1;
+		con.gridwidth = 3;
+		con.gridheight = 1;
+		//Adds animation panel to control panel
+		controlPanel.add(new JScrollPane (testPanel), con);
+		
+		//Sets constraints
+		con.insets = new Insets(20,30,0,30);
+		con.gridx = 0;
+		con.gridy = 2;
+		con.weightx = .5;
+		con.weighty = .2;
+		con.gridwidth = 1;
+		con.gridheight = 1;
+		//Adds population button to control panel
+		controlPanel.add(popButton, con);
+		
+		//Sets constraints
+		con.gridx = 1;
+		con.weightx = .3;
+		con.weighty = .2;
+		//Adds sort button to control panel
+		controlPanel.add(sortButton, con);
+		
+		//Sets constraints
+		con.gridx = 2;
+		con.weightx = .3;
+		con.weighty = .2;
+		//Adds sort drop down box to control panel
+		controlPanel.add(sortBox, con);
+		
+		//Disables sort button
+		sortButton.setEnabled(false);
+		
+		//Sets control panel to visible
+		controlPanel.setVisible(true);
+		
+		//Action listener for population button
+		popButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Random rand = new Random();
+				intArray = new int[testPanel.getWidth()];
+				for(int i = 0; i < intArray.length; i++)
+				{
+					//Fills array with numbers between 0 and animation panel height
+					intArray[i] = rand.nextInt(testPanel.getHeight()-1) + 0;
+				}
+				//Paints array
+				repaint();
+				
+				//Enables sort button, disables populate button
+				sortButton.setEnabled(true);
+                popButton.setEnabled(false);
+			}
+		});
+		
+		//Listener for sort button
+		sortButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent f)
+			{
+				//Creates new thread for animation panel
+				Thread t1 = new Thread(testPanel);
+				t1.start();
+			}
+		});
+		
+	}
+	
+	private class SortAnimationPanel extends JPanel implements Runnable
+	{
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		public void run() {
+			String selectedValue = sortBox.getSelectedItem().toString();
+			sortButton.setEnabled(false);
+			
+			if(selectedValue.equals("Selection"))
+			{
+				//Calls selection sort
+				selectionSort(intArray);
+			}
+			if(selectedValue.equals("Quick"))
+			{
+				//Calls quick sort
+				quickSort(intArray, 0, intArray.length - 1);
+                popButton.setEnabled(true);
+			}
+			if(selectedValue.equals("Bubble"))
+			{
+				//Calls bubble sort
+				bubbleSort(intArray);
+			}
+				
+		}
+		
+		public SortAnimationPanel()
+		{
+			//Sets preferred dimensions of animation panel and sets color
+			this.setPreferredSize(new Dimension(600,600));
+			this.setBackground(Color.WHITE);
+		}
+		
+		//Override paint component
+		public void paintComponent(Graphics g)
+		{
+			if(intArray != null)
+			{
+				for(int i = 0; i < intArray.length; i++)
+				{
+					//Draws line starting at 0 and going to end of animation panel
+					g.drawLine(i,testPanel.getWidth(), i,testPanel.getWidth()-intArray[i]);
+					g.setColor(Color.BLUE);
+				}
+			}
+		}
+	}
+	
+	//Selection sort
+	public void selectionSort(int[] array)
+    {
+        try
+        {
+            for (int i=0; i<array.length-1; i++)
+            {
+                for (int j=i+1; j<array.length; j++)
+                {
+                    if (array[i] > array[j])
+                    {
+                        int temp = array[i];
+                        array[i] = array[j];
+                        array[j] = temp;
+
+                        //Repaint lines after swapping elements
+                        repaint();
+                    }
+                }
+                //Pauses for length of speed variable
+                Thread.sleep(speed);
+            }
+
+            //Enable populate button
+            popButton.setEnabled(true);
+        }
+
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+    }
+	
+	//Quick sort
+	public void quickSort(int array[], int start, int end)
+    {
+        int i = start;
+        int k = end;
+
+        try
+        {
+            if (end - start >= 1)
+            {
+                int pivot = array[start];
+
+                while (k > i)
+                {
+                    while (array[i] <= pivot && i <= end && k > i)
+                    {
+                        i++;
+                    }
+
+                    while (array[k] > pivot && k >= start && k >= i)
+                    {
+                        k--;
+                    }
+                    if (k > i)
+                    {
+                        int temp = array[i];
+                        array[i] = array[k];
+                        array[k] = temp;
+                        //Repaints line
+                        repaint();
+                    }
+                }
+
+                int temp1 = array[start];
+                array[start] = array[k];
+                array[k] = temp1;
+                //Repaints line
+                repaint();
+
+                quickSort(array, start, k - 1);
+                
+                //Pauses for length of speed variable after swapping
+                Thread.sleep(speed);
+
+                quickSort(array, k + 1, end);
+            }
+            else
+            {
+                return;
+            }
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+
+        }
+    }
+	
+	//Bubble sort
+	public void bubbleSort(int[] array)
+    {
+
+        try
+        {
+            int n = array.length;
+            int temp = 0;
+
+            for(int i=0; i < n; i++)
+            {
+                for(int j=1; j < (n-i); j++)
+                {
+                    if(array[j-1] > array[j])
+                    {
+                        //swap the elements!
+                        temp = array[j-1];
+                        array[j-1] = array[j];
+                        array[j] = temp;
+                        //Repaint line
+                        repaint();
+                    }
+                }
+                //Pauses for length of speed variable
+                Thread.sleep(speed);
+            }
+
+            //Enable populate button
+            popButton.setEnabled(true);
+        }
+
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+
+        }
+        //Enables populate button
+        popButton.setEnabled(true);
+    }
+}

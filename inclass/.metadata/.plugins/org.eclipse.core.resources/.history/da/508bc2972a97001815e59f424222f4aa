@@ -1,0 +1,27 @@
+package assign6;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+
+import javax.swing.JFrame;
+
+public class SortAnimationFrame extends JFrame
+{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JFrame mainFrame;
+	public SortAnimationFrame(SortPanel panel1, SortPanel panel2)
+	{
+		mainFrame = new JFrame("Sorting Animation");
+		mainFrame.setSize(1000, 350);
+		mainFrame.setLayout(new GridBagLayout());
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		GridBagConstraints con = new GridBagConstraints();
+		con.fill = GridBagConstraints.BOTH;
+		
+		
+	}
+}

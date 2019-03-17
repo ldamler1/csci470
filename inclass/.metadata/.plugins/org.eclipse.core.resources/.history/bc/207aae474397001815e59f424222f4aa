@@ -1,0 +1,21 @@
+package assign6_2;
+
+import javax.swing.JFrame;
+
+public class SortApp extends JFrame
+{
+	SortPanel panel1 = new SortPanel();
+    SortPanel panel2 = new SortPanel();
+	
+	public static void main(String[] args)
+	{
+		
+	}
+
+	public SortApp()
+    {
+        //Add the sort panels
+        this.add(panel1);
+        this.add(panel2);
+    }
+}

@@ -1,0 +1,37 @@
+/************************************************************
+ *                                                          *
+ *  CSCI 470/680          Assignment 1         Summer 2018  *                                             
+ *                                                          *
+ *  Programmer: Damler, Lucas                               *
+ *              z1761739                                    *
+ *                                                          *
+ *  Date Due:   21 JUN 2018                                 *                          
+ *                                                          *
+ *  Purpose:    A brief (2-4 sentences) description of      *
+ *              what the program does goes here.            *
+ *                                                          * 
+ ***********************************************************/
+public class Assign2
+{
+  public static void main(String[] args)
+  {
+    int numA = 42,
+        numB = 21,
+        numC;
+    
+    double numD;
+    
+    System.out.println("**** CSCI 470/680-E Assignment 2 Output ****");
+    
+    numC = numA/numB;
+    System.out.printf("the result of integer %d divided by integer %d and stored in an integer is %d\n", numA, numB, numC);
+    
+    numD = numA/numB;
+    System.out.printf("the result of integer %d divided by integer %d and stored in a double is %f\n", numA, numB, numD);
+    
+    numD = (double)(numA)/numB;
+    System.out.printf("The result of integer %f (cast as a double) divided by integer %d and stored in a double is %f\n", numA, numB, numD);
+  
+    System.out.println("**** CSCI 470/680-E Output Complete ****");
+  }
+}

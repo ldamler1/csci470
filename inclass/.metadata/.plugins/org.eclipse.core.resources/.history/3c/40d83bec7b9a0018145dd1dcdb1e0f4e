@@ -1,0 +1,282 @@
+package assign5;
+
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Color;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
+import java.awt.event.ActionEvent;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JButton;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.ListSelectionModel;
+import javax.swing.SpinnerListModel;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+
+public class MileRedemptionGUI extends JFrame 
+{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JFrame mainFrame;		//main frame
+	private Destination dest;
+	private JPanel placesPanel, redeemPanel;
+	private String[] trips;
+	private MileRedeemer redeem = new MileRedeemer();
+	public MileRedemptionGUI() throws IOException
+	{
+		String fileName = JOptionPane.showInputDialog("Enter file name");
+		File text = new File(fileName);
+		do
+		{
+			JOptionPane.showMessageDialog(null, "File not found");
+			fileName = JOptionPane.showInputDialog("Enter file name");
+			text = new File(fileName);
+		}while(!(text.isFile()));
+		Scanner fileScan = new Scanner(text);
+		redeem.readDestinations(fileScan);
+		
+		mainFrame = new JFrame("Mile Redemption App");
+		mainFrame.setSize(1000, 750);
+		mainFrame.setLayout(new GridBagLayout());
+		mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		GridBagConstraints con = new GridBagConstraints();
+		con.fill = GridBagConstraints.BOTH;
+		
+		placesPanel = new JPanel(new GridBagLayout());
+		con.gridx = 0;
+		con.gridy = 0;
+		con.weightx = .3;
+		con.weighty = 1;
+		con.gridwidth = 2;
+		
+		mainFrame.add(placesPanel, con);
+		
+		redeemPanel = new JPanel(new GridBagLayout());
+		con.gridx = 2;
+		con.gridy = 0;
+		con.weightx = .7;
+		con.weighty = 1;
+		con.gridwidth = 2;
+		mainFrame.add(redeemPanel, con);
+		
+		//JLIST places
+		String[] places = redeem.getCityNames();
+		JList<String> placeList = new JList<String>(places);
+		placeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		placeList.setSelectedIndex(0);
+		con.gridx = 0;
+		con.gridy = 0;
+		placesPanel.add(new JScrollPane(placeList), con);
+		
+		//JTEXTFIELD ADD JLABEL TO TEXT FIELDS
+		//NORMAL MILES
+		JTextField nMiles, cMiles, uMiles, dates;
+		nMiles = new JTextField("");
+		nMiles.setEditable(false);
+		con.gridx = 1;
+		con.gridy = 2;
+		con.gridwidth = 1;
+		con.weighty = .01;
+		placesPanel.add(nMiles, con);
+		
+		JLabel nMilesLabel = new JLabel("Normal Miles");
+		nMilesLabel.setLabelFor(nMiles);
+		nMilesLabel.setHorizontalTextPosition(JLabel.LEFT);
+		con.gridx = 0;
+		con.gridy = 2;
+		con.weightx = 0.05;
+		placesPanel.add(nMilesLabel, con);
+		
+		//CHEAP MILES
+		cMiles = new JTextField("");
+		cMiles.setEditable(false);
+		con.gridx = 1;
+		con.gridy = 3;
+		placesPanel.add(cMiles, con);
+		
+		JLabel cMilesLabel = new JLabel("Supersaver Miles");
+		cMilesLabel.setLabelFor(cMiles);
+		cMilesLabel.setHorizontalTextPosition(JLabel.LEFT);
+		con.gridx = 0;
+		con.gridy = 3;
+		placesPanel.add(cMilesLabel, con);
+		
+		//UPGRADE MILES
+		uMiles = new JTextField("");
+		uMiles.setEditable(false);
+		con.gridx = 1;
+		con.gridy = 4;
+		placesPanel.add(uMiles, con);
+		
+		JLabel uMilesLabel = new JLabel("Upgrade Miles");
+		uMilesLabel.setLabelFor(uMiles);
+		uMilesLabel.setHorizontalTextPosition(JLabel.LEFT);
+		con.gridx = 0;
+		con.gridy = 4;
+		placesPanel.add(uMilesLabel, con);
+		
+		//DATES
+		dates = new JTextField("");
+		dates.setEditable(false);
+		con.gridx = 1;
+		con.gridy = 5;
+		placesPanel.add(dates, con);
+		
+		JLabel datesLabel = new JLabel("Supersaver Dates");
+		datesLabel.setLabelFor(dates);
+		datesLabel.setHorizontalTextPosition(JLabel.LEFT);
+		con.gridx = 0;
+		con.gridy = 5;
+		placesPanel.add(datesLabel, con);
+		
+		String[] months = getMonthStrings();
+		
+		placeList.addListSelectionListener(
+				new ListSelectionListener()
+				{
+					@Override
+					public void valueChanged(ListSelectionEvent e)
+					{
+						dest = redeem.findDestination(places[placeList.getSelectedIndex()]);
+						int t1 = dest.getNormalMiles(); nMiles.setText(String.valueOf(t1));
+						int t2 = dest.getCheapMiles(); cMiles.setText(String.valueOf(t2));
+						int t3 = dest.getUpgradeMiles(); uMiles.setText(String.valueOf(t3));
+						String t4 = months[dest.getStartMonth()-1] + " - " + months[dest.getEndMonth()-1];
+						dates.setText(t4);
+					}
+				});
+		//TEXTAREA
+		JButton redeemButton = new JButton("Redeem Miles");
+		con.gridx = 0;
+		con.gridy = 3;
+		con.gridwidth = 2;
+		con.weighty = .01;
+		redeemPanel.add(redeemButton, con);
+		
+		JTextArea tripTextArea = new JTextArea(10,10);
+		con.gridx = 0;
+		con.gridy = 4;
+		con.weighty = 1;
+		redeemPanel.add(new JScrollPane(tripTextArea), con);
+		
+		//ENTER MILES
+		JTextField enterMiles = new JTextField("");
+		con.gridx = 1;
+		con.gridy = 0;
+		con.gridwidth = 1;
+		con.weightx = 0.75;
+		con.weighty = .01;
+		redeemPanel.add(enterMiles, con);	
+		
+		JLabel eMilesLabel = new JLabel("Enter miles");
+		eMilesLabel.setLabelFor(dates);
+		eMilesLabel.setHorizontalTextPosition(JLabel.LEFT);
+		con.gridx = 0;
+		con.gridy = 0;
+		con.weightx = 0.25;
+		redeemPanel.add(eMilesLabel, con);
+		
+		//ENTER MONTHS
+		SpinnerListModel monthList = new SpinnerListModel(months);
+		JSpinner monthSpinner = new JSpinner(monthList);
+		con.gridx = 1;
+		con.gridy = 1;
+		redeemPanel.add(monthSpinner, con);
+		
+		JLabel eMonthLabel = new JLabel("Select month of departure");
+		eMonthLabel.setLabelFor(monthSpinner);
+		eMonthLabel.setHorizontalTextPosition(JLabel.LEFT);
+		con.gridx = 0;
+		con.gridy = 1;
+		redeemPanel.add(eMonthLabel, con);
+		
+		//REMAINING MILES
+		JTextField remainingMiles = new JTextField("");
+		remainingMiles.setEditable(false);
+		con.gridx = 1;
+		con.gridy = 5;
+		redeemPanel.add(remainingMiles, con);
+		
+		JLabel rMilesLabel = new JLabel("Remaining miles");
+		rMilesLabel.setLabelFor(remainingMiles);
+		rMilesLabel.setHorizontalTextPosition(JLabel.LEFT);
+		con.gridx = 0;
+		con.gridy = 5;
+		redeemPanel.add(rMilesLabel, con);
+		
+		redeemButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tripTextArea.setText("");
+				int textValue = Integer.parseInt(enterMiles.getText());
+				int monthValue = getMonthIndex(monthSpinner, months);
+				
+				System.out.println(monthValue);
+				trips = redeem.redeemMiles(textValue, monthValue);
+				for(String s : trips)
+				{
+				tripTextArea.append("\n");
+				tripTextArea.append(s);
+				}
+				remainingMiles.setText(String.valueOf(redeem.getRemainingMiles()));
+			}
+		});
+		
+		//TEXT FIELD SPINNER FOR SELECTING MONTH
+		//TEXT FIELD FOR REMAINING MILES
+		
+		placesPanel.setBorder(new TitledBorder(new LineBorder(Color.BLACK, 1),
+				"Destinations"));
+		placesPanel.setBackground(new Color(50, 150, 75));
+		
+		redeemPanel.setBorder(new TitledBorder(new LineBorder(Color.BLACK, 1),
+				"Redeem Miles"));
+		redeemPanel.setBackground(new Color(125, 125, 175));
+		
+		mainFrame.setVisible(true);
+	}
+	protected String[] getMonthStrings() 
+	{
+		String[] months = new java.text.DateFormatSymbols().getMonths();
+	  
+		int lastIndex = months.length - 1;
+	  
+		if (months[lastIndex] == null || months[lastIndex].length() <= 0)  
+		{ 
+			String[] monthStrings = new String[lastIndex];
+			System.arraycopy(months, 0, monthStrings, 0, lastIndex);
+			return monthStrings;
+		}
+		else 
+		{
+			return months;
+		}
+	}
+	
+	public int getMonthIndex(JSpinner spinner, String[] array)
+	{
+		int i = 0;
+		for(String s : array)
+		{
+			if(s.equals(spinner.getValue()))
+				return i+1;
+		i++;
+		}
+		return -1;
+	}
+}

@@ -1,0 +1,35 @@
+package assign6;
+
+import java.awt.Graphics;
+import javax.swing.JPanel;
+
+public class SortPanel extends JPanel
+{
+	private int[] intArray1, intArray2;
+	
+	public abstract class SortAnimationPanel extends JPanel implements Runnable
+	{
+		//ANIMATION/RESULT
+		
+		//get the dimensions of the panel and clear it
+			//if the array of integers not null, draw series of lines on the panel surface representing array elements. 
+			//The height of each line should represent the integer value of the corresponding integer array element. 
+		
+		@Override
+		protected void paintComponent(Graphics g)
+		{
+			super.paintComponent(g);
+			
+			
+		}
+	}
+	public SortPanel(SortAnimationPanel testPanel)
+	{
+		//JBUTTON for populate array and sort
+			//Array is size of panel width(pixels)
+			//Range is 0 to panel height
+			//Once built call repaint to display, disable Populate button, enable sort button
+		//JCOMBOBOX for selection
+		//JPANEL for image display
+	}
+}
